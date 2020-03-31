@@ -5,5 +5,5 @@ This app will display as much relevant information as possible on any artists gi
 
 ## User Story
 	As: a Music Lover
-	I want: an app to show me similar artists, and show times for them
+	I want: an app to show me info on my favorite artists, and links to similar artists
 	So that I: can discover and enjoy new music
