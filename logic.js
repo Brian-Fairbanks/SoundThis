@@ -1,6 +1,6 @@
 $(document).ready(function () {
-    var apiKey = "codingbootcamp"
-    var artist = userInput
+    var apiKey = "e2e8d997dbfc78f64d2429abef0e6949"
+    // var artist = userInput
     
 
     var queryURL = "https://rest.bandsintown.com/artists/" + artist + "?app_id=" + apiKey
