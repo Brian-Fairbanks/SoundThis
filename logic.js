@@ -50,9 +50,13 @@ function getTrending() {
         url: trendingQuery,
         method: "GET",
     })
-        .then(function (response) {
-            printTrending(response);
-        });
+    .fail(function (xhr, ajaxOptions, thrownError) {
+        console.log("Trending Error: "+JSON.stringify(xhr));
+        trendingWell.empty().append($("<div/>",{text:"I'm sorry, but there has been an error pulling todays trending artists", class:"text-center bg-green-200 text-xl w-full p-3"}));
+    })
+    .done(function (response) {
+        printTrending(response);
+    });
 }
 
 
@@ -86,6 +90,7 @@ function getData(artist) {
         error: function (xhr, ajaxOptions, thrownError) {
             if (xhr.status == 404) {
                 console.log("ERROR: 404");
+                return;
             }
         }
     })
