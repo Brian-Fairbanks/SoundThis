@@ -10,6 +10,12 @@ var trendingQuery = 'https://api.vagalume.com.br/rank.php?apikey='+vagaAuthKey+'
 var trendingWell = $("#trendingWell"); 
 var relatedWell = $("#relatedWell"); 
 
+// Search History Vars
+var artistSearch = $("#artistSearchForm");
+var artistInput = $("#artistInput");
+var artistHist;
+var searchedArtistGroup = $("#searchWell");
+
 
 //albums
 var albumWell = $("#albumWell");
@@ -100,20 +106,7 @@ function getData(artist){
 }
 
 
-/*==============================================
-=      Global Variables
-================================================*/
-
-//start by immediately  showing the ternding artists
-getTrending();
-
-
-
-var artistSearch = $("#artistSearchForm");
-var artistInput = $("#artistInput");
-var artistHist;
-var searchedArtistGroup = $("#searchWell");
-
+//          History Functions
 function printButtons(){
 
     searchedArtistGroup.empty();
@@ -156,6 +149,14 @@ function artistAdded(event){
     printButtons();
 }
 
+
+/*==============================================
+=      Main Code
+================================================*/
+
+//start by immediately  showing the ternding artists
+getTrending();
+
 $(window).on("load", function(){
     loadHist();
     printButtons();
@@ -166,4 +167,8 @@ artistSearchForm.on("submit", artistAdded);
 $(document).on("click",".artist-btn", function(){
     artist = $(this).attr("data-artist");
     printDataForArtist(artist);
+  
+//add event listner to each trending buttony
+$(document).on("click",".trending",function(){
+    getData ($(this).attr("data-artist").toLowerCase().trim().replace(" ","-")); 
 })
