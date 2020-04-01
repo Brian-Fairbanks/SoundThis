@@ -35,6 +35,7 @@ function printTrending(response){
 }
 
 // run an ajax call to get the top 6 trending artists from VagaLume API, then pass this to print
+
 function getTrending(){
     $.ajax({ 
         url:trendingQuery,
@@ -44,7 +45,6 @@ function getTrending(){
         printTrending(response);
     });
 }
-
 
 
 function printAlbums(albumArray){
