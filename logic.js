@@ -78,7 +78,7 @@ function printRelated(relatedArray) {
 
 function getData(artist) {
     $.ajax({
-        url: "https://www.vagalume.com.br/" + artist + "/index.js",
+        url: "https://www.vagalume.com.br/" + artist.split(" ").join("-") + "/index.js",
         method: "GET",
         error: function (xhr, ajaxOptions, thrownError) {
             if (xhr.status == 404) {
@@ -96,7 +96,7 @@ function getData(artist) {
             // print all of the albums & related tracks associated with this artist
             printAlbums(response.artist.albums.item);
             printRelated(response.artist.related);
-            bandsintown(artist);
+            bandsintown(artist.split(" ").join("+"));
 
             //hide previous card, and display artist card
             $("#landing-page").addClass("collapsed", 400, function () {
