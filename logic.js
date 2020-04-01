@@ -21,6 +21,9 @@ var searchedArtistGroup = $("#searchWell");
 var albumWell = $("#albumWell");
 var curBandData;
 
+//EVENTS
+var eventWell = $("#eventWell")
+
 /*==============================================
 =       Functions
 ================================================*/
