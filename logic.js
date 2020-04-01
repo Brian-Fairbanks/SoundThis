@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 $(document).ready(function () {
     var apiKey = "codingbootcamp"
     var artist = userInput
@@ -13,8 +12,7 @@ console.log("making ajax call")
         dataType: "json"
     }).then(function (response) {
         console.log(response);
-        // for(similarArtist of response.similar.info.results){
-        // console.log(similarArtist)}
+        
 
     })
     
@@ -24,7 +22,6 @@ console.log("making ajax call")
     }
 );
 
-=======
 function getData(artist){
     $.ajax({ 
         url:"https://www.vagalume.com.br/u2/index.js",
@@ -74,4 +71,3 @@ function getTrending(){
 }
 
 getTrending();
->>>>>>> be179bc2ba9362829a55f88fbc0e02352f22eb51
