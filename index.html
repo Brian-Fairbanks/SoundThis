@@ -9,9 +9,9 @@
     <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="./styles.css">
     <!-- jquery 3.4.1 - latest -->
-    <script src="https://code.jquery.com/jquery-3.4.1.min.js"
-        integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
-        <script src="https://kit.fontawesome.com/9aa3b96097.js" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+    <script  src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"  integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU="  crossorigin="anonymous"></script>
+    <script src="https://kit.fontawesome.com/9aa3b96097.js" crossorigin="anonymous"></script>
 
 </head>
 
@@ -58,21 +58,23 @@
                 </h2>
                 <p>
                     Lorem, ipsum dolor sit amet consectetur adipisicing elit. Aperiam perspiciatis, harum nesciunt nam
-                    dignissimos impedit architecto laboriosam odio temporibus placeat officia. Nostrum temporibus similique
-                    laboriosam nam, placeat eligendi aspernatur in id eveniet quibusdam ad quisquam ratione necessitatibus
-                    quod deleniti minima est, quasi maiores? Explicabo obcaecati minus libero ab rem voluptas praesentium
-                    repellendus quam quo totam, enim ipsam, dicta temporibus nisi in provident labore! Quas voluptas porro
-                    eligendi voluptatem! Eum, at.
                 </p>
             </section>
         </div>
 
-        <div>
+        <div id="artistPage" class="collapsed">
             <section>
                 <h2 class="bg-teal-700 text-green-100 text-2xl font-bold p-3">
                     Albums
                 </h2>
                 <div id="albumWell"></div>
+            </section>
+
+            <section>
+                <h2 class="bg-teal-700 text-green-100 text-2xl font-bold p-3">
+                    Related Artists
+                </h2>
+                <div id="relatedWell"></div>
             </section>
         </div>
 

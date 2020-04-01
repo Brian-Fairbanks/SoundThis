@@ -1,13 +1,14 @@
 /*==============================================
 =       Global Variables
 ================================================*/
-
+var landingPage = $("#landing-page");
 
 var vagaAuthKey = "9e3c9da5e3a86ef90b7a336db22e59cb";
 // Trending Artists API
 var trendingQuery = 'https://api.vagalume.com.br/rank.php?apikey='+vagaAuthKey+'&type=art&period=day&scope=internacional&limit=6';
 
 var trendingWell = $("#trendingWell"); 
+var relatedWell = $("#relatedWell"); 
 
 
 //albums
@@ -50,11 +51,24 @@ function printAlbums(albumArray){
     // console.log(albumArray);
     albumWell.empty();
     for(album of albumArray){
+        console.log(album);
         albumWell.append(
             $("<div/>",{text:album.desc})
         );
     }
 }
+function printRelated(relatedArray){
+    // console.log(albumArray);
+    relatedWell.empty();
+    for(artist of relatedArray){
+        console.log(artist);
+        relatedWell.append(
+            $("<div/>",{text:artist.name})
+        );
+    }
+}
+
+
 
 function getData(artist){
     $.ajax({ 
@@ -67,12 +81,21 @@ function getData(artist){
         }
     })
     .then(function(response){
-        //store? this information may actually be useful later
+
+
+        //store? this information may actually be useful laterS
         curBandData = response;
         console.log(curBandData);
 
-        // print all of the albums associated with this artist
+        // print all of the albums & related tracks associated with this artist
         printAlbums(response.artist.albums.item);
+        printRelated(response.artist.related);
+
+        //hide previous card, and display artist card
+        $("#landing-page").addClass("collapsed",400, function(){
+            $("#artistPage").removeClass("collapsed",400);
+        });
+        
     });
 }
 
