@@ -1,13 +1,14 @@
-$(document).ready(function () {
-    var apiKey = "e2e8d997dbfc78f64d2429abef0e6949"
-    // var artist = userInput
-    
 
-    var queryURL = "https://rest.bandsintown.com/artists/" + artist + "?app_id=" + apiKey
+$(document).ready(function(){
+    var apiKey= "e2e8d997dbfc78f64d2429abef0e6949"
+    var eventURL= "https://rest.bandsintown.com/artists/zac+brown+band/events?app_id=" +apiKey
+    // var artist = userInput
+    var artistURL = "https://rest.bandsintown.com/artists/zac+brown+band?app_id=" + apiKey
+    // + artist +
 
 console.log("making ajax call")
     $.ajax({
-        url: queryURL,
+        url: artistURL,
         method: "GET",
         dataType: "json"
     }).then(function (response) {
@@ -15,8 +16,14 @@ console.log("making ajax call")
         
 
     })
-    
-
+    console.log("making ajax call")
+    $.ajax({
+        url: eventURL,
+        method: "GET",
+        dataType:"json"
+    }).then(function(response){
+        console.log(response)
+    })
     
 
     }
