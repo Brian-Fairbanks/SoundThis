@@ -47,3 +47,64 @@ function getTrending(){
 }
 
 getTrending();
+
+
+
+var artistSearch = $("#artistSearchForm");
+var artistInput = $("#artistInput");
+var artistHist;
+var searchedArtistGroup = $("#searchWell");
+
+function printButtons(){
+
+    searchedArtistGroup.empty();
+
+    for(artist of artistHist){
+        searchedArtistGroup.prepend( $("<btn>",{class:"btn btn-primary text-light", 'data-artist':artist, text:artist}) )
+    }
+    saveHist();
+}
+
+
+
+function saveHist(){
+    localStorage.setItem('history',JSON.stringify(artistHist));
+}
+
+function loadHist(){
+    artistHist = JSON.parse(localStorage.getItem('history'));
+    if(artistHist === null){
+        artistHist = [];
+    }
+}
+
+function artistAdded(event){
+    event.preventDefault();
+    newArtist = artistInput.val().toLowerCase().trim();
+
+    if(artistHist.indexOf(newArtist) < 0){
+        artistHist.push(newArtist)
+    }
+    else{
+        printDataForArtist(newArtist);
+        return;
+    }
+
+    artistInput.val("");
+
+    printDataForArtist(newArtist);
+
+    printButtons();
+}
+
+$(window).on("load", function(){
+    loadHist();
+    printButtons();
+});
+
+artistSearchForm.on("submit", artistAdded);
+
+$(document).on("click",".artist-btn", function(){
+    artist = $(this).attr("data-artist");
+    printDataForArtist(artist);
+})
