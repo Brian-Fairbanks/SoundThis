@@ -1,3 +1,4 @@
-.btn{
-    margin-left: 40px;
+.collapsed{
+    height:1px;
+    overflow:hidden;
 }
