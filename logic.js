@@ -185,7 +185,11 @@ function artistAdded(event) {
 
     printButtons();
 }
+//
 
+// //
+
+//
 
 /* = BandsInTown Functions
 ========================================================*/
@@ -267,7 +271,7 @@ function printEvents(response) {
 =      Main Code
 ================================================*/
 
-//start by immediately  showing the ternding artists
+//start by immediately showing the trending artists
 getTrending();
 
 $(window).on("load", function () {
@@ -281,3 +285,17 @@ artistSearch.on("submit", artistAdded);
 $(document).on("click", ".artist-btn", function () {
     getData($(this).attr("data-artist").toLowerCase().trim().split(" ").join("-"));
 });
+
+//Clear Searched Artists History
+$("#HistoryClear").on("click", function() {
+    //alert("Test!");
+    artistHist = [];
+    printButtons();
+});
+
+
+//Clicking Logo will Take you back to Landing Page
+$("#homepage-btn").on("click", function () {
+    // alert("test");
+    artistPage.addClass("collapsed", 300, function () {
+        landingPage.removeClass("collapsed", 300);})});
