@@ -194,7 +194,7 @@ var apiKey = "e2e8d997dbfc78f64d2429abef0e6949"
 =      Main Code
 ================================================*/
 
-//start by immediately  showing the ternding artists
+//start by immediately showing the trending artists
 getTrending();
 
 $(window).on("load", function () {
@@ -208,3 +208,10 @@ artistSearch.on("submit", artistAdded);
 $(document).on("click", ".artist-btn", function () {
     getData($(this).attr("data-artist").toLowerCase().trim().replace(" ", "-"));
 });
+
+
+
+$("#homepage-btn").on("click", function () {
+    // alert("test");
+    $("#artist-page").addClass("collapsed", 300, function () {
+        $("#landing-Page").removeClass("collapsed", 300);})});
