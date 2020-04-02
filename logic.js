@@ -112,7 +112,7 @@ function getData(artist) {
             $("#vagaLink").attr("href","https://www.vagalume.com.br/"+response.artist.url)
             printAlbums(response.artist.albums.item);
             printRelated(response.artist.related);
-            bandsintown(artist.split(" ").join("+"));
+            bandsintown(artist.split(/[ -]/).join("+"));
 
             //hide previous card, and display artist card
             $("#landing-page").addClass("collapsed", 300, function () {
@@ -167,6 +167,7 @@ function artistAdded(event) {
 }
 
 
+
 // BANDSINTOWN CODE
 function bandsintown(artist){
 var apiKey = "e2e8d997dbfc78f64d2429abef0e6949"
@@ -190,7 +191,38 @@ var apiKey = "e2e8d997dbfc78f64d2429abef0e6949"
         dataType: "json"
     }).then(function (response) {
         console.log(response)
+        
+        
+        printEvents(response);
+        
+        trendingWell.append(
+            $("<div/>", { class: "card artist-btn trending w-full md:w-1/6 inline-flex md:block items-center text-center bg-green-200", 'data-artist': ranked.name }).append([
+                $("<img/>", { src: ranked.pic_small, alt: ranked.name, class: "md:w-full sm:" }),
+                $("<span/>", { text: ranked.name, class: "ml-2" }),
+            ])
+        );
+        
     })
+}
+
+function printEvents(response) {
+    console.log(response.datetime)
+    eventWell.empty();
+    
+    for (const showing of response) {
+        var dates= moment(showing.datetime)
+        console.log(showing.datetime);
+        $(eventWell).append(dates.format("MMM Do YYYY"));
+    }
+
+    for(const place of response) {
+        var venue= place.venue.name
+        var city= place.venue.city
+        var state= place.venue.region
+        $(eventWell).append(JSON.stringify(venue))
+        $(eventWell).append(JSON.stringify(city))
+        $(eventWell).append(JSON.stringify(state))
+    }
 }
 
 /*==============================================
@@ -209,5 +241,7 @@ artistSearch.on("submit", artistAdded);
 
 // add link for all artist buttons
 $(document).on("click", ".artist-btn", function () {
-    getData($(this).attr("data-artist").toLowerCase().trim().replace(" ", "-"));
+   
+    getData($(this).attr("data-artist").toLowerCase().trim().split(" ").join("-"));
+
 });
