@@ -2,6 +2,7 @@
 =       Global Variables
 ================================================*/
 var landingPage = $("#landing-page");
+var artistPage = $("#artistPage");
 
 var vagaAuthKey = "9e3c9da5e3a86ef90b7a336db22e59cb";
 // Trending Artists API
@@ -21,8 +22,13 @@ var searchedArtistGroup = $("#searchWell");
 var albumWell = $("#albumWell");
 var curBandData;
 
+<<<<<<< HEAD
 //EVENTS
 var eventWell = $("#eventWell")
+=======
+// Repeated tailwind Styles
+var artistBtnStyles = "artist-btn w-full md:w-1/2 lg:w-1/4 xl:w-1/6 inline-flex md:block items-center text-center bg-green-200 p-1 text-lg capitalize";
+>>>>>>> master
 
 /*==============================================
 =       Functions
@@ -45,6 +51,8 @@ function printTrending(response) {
 
 // run an ajax call to get the top 6 trending artists from VagaLume API, then pass this to print
 
+/* = Trending Tab Functions
+========================================================*/
 function getTrending() {
     $.ajax({
         url: trendingQuery,
@@ -60,6 +68,8 @@ function getTrending() {
 }
 
 
+/* = Artist Page Functions
+========================================================*/
 function printAlbums(albumArray) {
     // console.log(albumArray);
     albumWell.empty();
@@ -78,9 +88,25 @@ function printRelated(relatedArray) {
     for (artist of relatedArray) {
         console.log(artist);
         relatedWell.append(
-            $("<div/>", { text: artist.name, class: "artist-btn w-full md:w-1/2 lg:w-1/4 xl:w-1/6 inline-flex md:block items-center text-center bg-green-200 p-1 text-lg capitalize", 'data-artist': artist.name})
+            $("<div/>", { text: artist.name, class: artistBtnStyles, 'data-artist': artist.name})
         );
     }
+}
+
+function printHeader(response){
+    //replace the artist name
+    $("#artistBannerName").text(response.artist.desc);
+
+    // clear the genre well, and add all the new artists genres
+    $("#genreWell").empty();
+    for(genre of response.artist.genre){
+        $("#genreWell").append( $("<div/>",{text:genre.name, class:"inline-block bg-teal-700 m-1 px-2 text-sm rounded"}) )
+    }
+    
+    // replace the source for the artists picture
+    $("#artistBannerPic").attr({'src':"https://www.vagalume.com.br"+response.artist.pic_medium, 'alt':response.artist.desc+" picture: from vagalume"});
+    //set the vagaLink to the current url
+    $("#vagaLink").attr("href","https://www.vagalume.com.br/"+response.artist.url)
 }
 
 
@@ -104,32 +130,28 @@ function getData(artist) {
             console.log(curBandData);
 
             // print all of the albums & related tracks associated with this artist
-            $("#artistBannerName").text(response.artist.desc);
-            for(genre of response.artist.genre){
-                $("#genreWell").append( $("<div/>",{text:genre.name, class:"inline-block bg-teal-700 m-1 px-2"}) )
-            }
-            $("#artistBannerPic").attr({'src':"https://www.vagalume.com.br"+response.artist.pic_medium, 'alt':response.artist.desc+" picture: from vagalume"});
-            $("#vagaLink").attr("href","https://www.vagalume.com.br/"+response.artist.url)
+            printHeader(response);
             printAlbums(response.artist.albums.item);
             printRelated(response.artist.related);
             bandsintown(artist.split(/[ -]/).join("+"));
 
             //hide previous card, and display artist card
-            $("#landing-page").addClass("collapsed", 300, function () {
-                $("#artistPage").removeClass("collapsed", 300);
+            landingPage.addClass("collapsed", 300, function () {
+                artistPage.removeClass("collapsed", 300);
             });
 
         });
 }
 
 
-//          History Functions
+/* = Search History Functions
+========================================================*/
 function printButtons() {
 
     searchedArtistGroup.empty();
 
     for (artist of artistHist) {
-        searchedArtistGroup.prepend($("<div/>", { class: "artist-btn w-full md:w-1/2 lg:w-1/4 xl:w-1/6 inline-flex md:block items-center text-center bg-green-200 p-1 text-lg capitalize", 'data-artist': artist, text: artist }))
+        searchedArtistGroup.prepend($("<div/>", { class: artistBtnStyles, 'data-artist': artist, text: artist }))
     }
     saveHist();
 }
@@ -167,8 +189,13 @@ function artistAdded(event) {
 }
 
 
+<<<<<<< HEAD
 
 // BANDSINTOWN CODE
+=======
+/* = BandsInTown Functions
+========================================================*/
+>>>>>>> master
 function bandsintown(artist){
 var apiKey = "e2e8d997dbfc78f64d2429abef0e6949"
     var eventURL = "https://rest.bandsintown.com/artists/" + artist + "/events?app_id=" + apiKey
@@ -205,6 +232,7 @@ var apiKey = "e2e8d997dbfc78f64d2429abef0e6949"
     })
 }
 
+<<<<<<< HEAD
 function printEvents(response) {
     console.log(response.datetime)
     eventWell.empty();
@@ -224,6 +252,8 @@ function printEvents(response) {
         $(eventWell).append(JSON.stringify(state))
     }
 }
+=======
+>>>>>>> master
 
 /*==============================================
 =      Main Code
@@ -241,7 +271,11 @@ artistSearch.on("submit", artistAdded);
 
 // add link for all artist buttons
 $(document).on("click", ".artist-btn", function () {
+<<<<<<< HEAD
    
     getData($(this).attr("data-artist").toLowerCase().trim().split(" ").join("-"));
 
+=======
+    getData($(this).attr("data-artist").toLowerCase().trim().split(" ").join("-"));
+>>>>>>> master
 });
