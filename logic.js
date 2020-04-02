@@ -213,5 +213,5 @@ $(document).on("click", ".artist-btn", function () {
 
 $("#homepage-btn").on("click", function () {
     // alert("test");
-    $("#artist-page").addClass("collapsed", 300, function () {
-        $("#landing-Page").removeClass("collapsed", 300);})});
+    $("#artistPage").addClass("collapsed", 300, function () {
+        $("#landing-page").removeClass("collapsed", 300);})});
