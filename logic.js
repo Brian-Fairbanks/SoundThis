@@ -55,13 +55,13 @@ function getTrending() {
         url: trendingQuery,
         method: "GET",
     })
-    .fail(function (xhr, ajaxOptions, thrownError) {
-        console.log("Trending Error: "+JSON.stringify(xhr));
-        trendingWell.empty().append($("<div/>",{text:"I'm sorry, but there has been an error pulling todays trending artists", class:"text-center bg-green-200 text-xl w-full p-3"}));
-    })
-    .done(function (response) {
-        printTrending(response);
-    });
+        .fail(function (xhr, ajaxOptions, thrownError) {
+            console.log("Trending Error: " + JSON.stringify(xhr));
+            trendingWell.empty().append($("<div/>", { text: "I'm sorry, but there has been an error pulling todays trending artists", class: "text-center bg-green-200 text-xl w-full p-3" }));
+        })
+        .done(function (response) {
+            printTrending(response);
+        });
 }
 
 
@@ -85,25 +85,25 @@ function printRelated(relatedArray) {
     for (artist of relatedArray) {
         console.log(artist);
         relatedWell.append(
-            $("<div/>", { text: artist.name, class: artistBtnStyles, 'data-artist': artist.name})
+            $("<div/>", { text: artist.name, class: artistBtnStyles, 'data-artist': artist.name })
         );
     }
 }
 
-function printHeader(response){
+function printHeader(response) {
     //replace the artist name
     $("#artistBannerName").text(response.artist.desc);
 
     // clear the genre well, and add all the new artists genres
     $("#genreWell").empty();
-    for(genre of response.artist.genre){
-        $("#genreWell").append( $("<div/>",{text:genre.name, class:"inline-block bg-teal-700 m-1 px-2 text-sm rounded"}) )
+    for (genre of response.artist.genre) {
+        $("#genreWell").append($("<div/>", { text: genre.name, class: "inline-block bg-teal-700 m-1 px-2 text-sm rounded" }))
     }
-    
+
     // replace the source for the artists picture
-    $("#artistBannerPic").attr({'src':"https://www.vagalume.com.br"+response.artist.pic_medium, 'alt':response.artist.desc+" picture: from vagalume"});
+    $("#artistBannerPic").attr({ 'src': "https://www.vagalume.com.br" + response.artist.pic_medium, 'alt': response.artist.desc + " picture: from vagalume" });
     //set the vagaLink to the current url
-    $("#vagaLink").attr("href","https://www.vagalume.com.br/"+response.artist.url)
+    $("#vagaLink").attr("href", "https://www.vagalume.com.br/" + response.artist.url)
 }
 
 
@@ -131,7 +131,7 @@ function getData(artist) {
             printAlbums(response.artist.albums.item);
             printRelated(response.artist.related);
             bandsintown(artist.split(/[ -]/).join("+"));
-            
+
 
             //hide previous card, and display artist card
             landingPage.addClass("collapsed", 300, function () {
@@ -193,10 +193,10 @@ function artistAdded(event) {
 
 /* = BandsInTown Functions
 ========================================================*/
-function bandsintown(artist){
-var apiKey = "e2e8d997dbfc78f64d2429abef0e6949"
+function bandsintown(artist) {
+    var apiKey = "e2e8d997dbfc78f64d2429abef0e6949"
     var eventURL = "https://rest.bandsintown.com/artists/" + artist + "/events?app_id=" + apiKey
-    var artistURL = "https://rest.bandsintown.com/artists/" + artist +"?app_id=" + apiKey
+    var artistURL = "https://rest.bandsintown.com/artists/" + artist + "?app_id=" + apiKey
 
     console.log("making ajax call")
     $.ajax({
@@ -215,57 +215,45 @@ var apiKey = "e2e8d997dbfc78f64d2429abef0e6949"
         dataType: "json"
     }).then(function (response) {
         console.log(response)
-        
-        
+
+
         printEvents(response);
-        
+
     })
 }
 
 function printEvents(response) {
-    console.log(response.datetime)
-    
-    
-    for (const showing of response) {
-        var dates= moment(showing.datetime)
-        console.log(showing.datetime);
-        $(eventWell).append(dates.format("MMM Do YYYY"));
-    }
-
-    for(const place of response) {
-        var venue= place.venue.name
-        var city= place.venue.city
-        var state= place.venue.region
-        $(eventWell).append(JSON.stringify(venue))
-        $(eventWell).append(JSON.stringify(city))
-        $(eventWell).append(JSON.stringify(state))
-
-    }
     eventWell.empty();
-    for(concert of eventArray){
-    eventWell.append(
-        $("</col"),{text: venue},
-        // $("</col"),{text: city},
-        // $("</col"), {text:state}
-    )
+    console.log(response.datetime)
+
+    if (response.length == 0) {
+        $(eventWell).append("Sorry No Events at This Time")
+        return;
     }
-    // albumWell.empty();
-    // for (album of albumArray) {
-    //     console.log(album);
-    //     albumWell.append(
-    //         $("<div/>", { text: album.desc })
-    //     );
-    // }
-    // for (ranked of response.art.day.internacional) {
-    //     // print it as a card to the trendingWell 
-    //     trendingWell.append(
-    //         $("<div/>", { class: "card artist-btn trending w-full md:w-1/6 inline-flex md:block items-center text-center bg-green-200", 'data-artist': ranked.name }).append([
-    //             $("<img/>", { src: ranked.pic_small, alt: ranked.name, class: "md:w-full sm:" }),
-    //             $("<span/>", { text: ranked.name, class: "ml-2" }),
-    //         ])
-    //     );
-    // }
+
+
+    for (const showing of response) {
+        var dates = moment(showing.datetime)
+        var venue = showing.venue.name
+        var city = showing.venue.city
+        var state = showing.venue.region
+
+        eventWell.append(
+            $("<div/>", { class: "card w-full text-center bg-green-200 flex mb-1" }).append([
+
+                $("<span/>", { text: dates.format("MMM Do YYYY"), class: "w-1/4" }),
+                $("<span/>", { text: venue, class: "w-1/4" }),
+                $("<span/>", { text: city, class: "w-1/4" }),
+                $("<span/>", { text: state, class: "w-1/4" })
+            ])
+        );
+    }
+
 }
+
+
+
+
 
 /*==============================================
 =      Main Code
@@ -287,7 +275,7 @@ $(document).on("click", ".artist-btn", function () {
 });
 
 //Clear Searched Artists History
-$("#HistoryClear").on("click", function() {
+$("#HistoryClear").on("click", function () {
     //alert("Test!");
     artistHist = [];
     printButtons();
@@ -298,4 +286,6 @@ $("#HistoryClear").on("click", function() {
 $("#homepage-btn").on("click", function () {
     // alert("test");
     artistPage.addClass("collapsed", 300, function () {
-        landingPage.removeClass("collapsed", 300);})});
+        landingPage.removeClass("collapsed", 300);
+    })
+});
