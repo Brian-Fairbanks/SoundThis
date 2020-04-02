@@ -162,7 +162,11 @@ function artistAdded(event) {
 
     printButtons();
 }
+//
 
+// //
+
+//
 
 // BANDSINTOWN CODE
 function bandsintown(artist){
@@ -207,4 +211,9 @@ artistSearch.on("submit", artistAdded);
 // add link for all artist buttons
 $(document).on("click", ".artist-btn", function () {
     getData($(this).attr("data-artist").toLowerCase().trim().replace(" ", "-"));
+});
+$("#HistoryClear").on("click", function() {
+    //alert("Test!");
+    artistHist = [];
+    printButtons();
 });
