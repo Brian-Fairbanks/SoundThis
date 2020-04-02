@@ -22,13 +22,10 @@ var searchedArtistGroup = $("#searchWell");
 var albumWell = $("#albumWell");
 var curBandData;
 
-<<<<<<< HEAD
 //EVENTS
 var eventWell = $("#eventWell")
-=======
 // Repeated tailwind Styles
 var artistBtnStyles = "artist-btn w-full md:w-1/2 lg:w-1/4 xl:w-1/6 inline-flex md:block items-center text-center bg-green-200 p-1 text-lg capitalize";
->>>>>>> master
 
 /*==============================================
 =       Functions
@@ -134,6 +131,7 @@ function getData(artist) {
             printAlbums(response.artist.albums.item);
             printRelated(response.artist.related);
             bandsintown(artist.split(/[ -]/).join("+"));
+            
 
             //hide previous card, and display artist card
             landingPage.addClass("collapsed", 300, function () {
@@ -189,13 +187,8 @@ function artistAdded(event) {
 }
 
 
-<<<<<<< HEAD
-
-// BANDSINTOWN CODE
-=======
 /* = BandsInTown Functions
 ========================================================*/
->>>>>>> master
 function bandsintown(artist){
 var apiKey = "e2e8d997dbfc78f64d2429abef0e6949"
     var eventURL = "https://rest.bandsintown.com/artists/" + artist + "/events?app_id=" + apiKey
@@ -222,20 +215,12 @@ var apiKey = "e2e8d997dbfc78f64d2429abef0e6949"
         
         printEvents(response);
         
-        trendingWell.append(
-            $("<div/>", { class: "card artist-btn trending w-full md:w-1/6 inline-flex md:block items-center text-center bg-green-200", 'data-artist': ranked.name }).append([
-                $("<img/>", { src: ranked.pic_small, alt: ranked.name, class: "md:w-full sm:" }),
-                $("<span/>", { text: ranked.name, class: "ml-2" }),
-            ])
-        );
-        
     })
 }
 
-<<<<<<< HEAD
 function printEvents(response) {
     console.log(response.datetime)
-    eventWell.empty();
+    
     
     for (const showing of response) {
         var dates= moment(showing.datetime)
@@ -250,10 +235,33 @@ function printEvents(response) {
         $(eventWell).append(JSON.stringify(venue))
         $(eventWell).append(JSON.stringify(city))
         $(eventWell).append(JSON.stringify(state))
+
     }
+    eventWell.empty();
+    for(concert of eventArray){
+    eventWell.append(
+        $("</col"),{text: venue},
+        // $("</col"),{text: city},
+        // $("</col"), {text:state}
+    )
+    }
+    // albumWell.empty();
+    // for (album of albumArray) {
+    //     console.log(album);
+    //     albumWell.append(
+    //         $("<div/>", { text: album.desc })
+    //     );
+    // }
+    // for (ranked of response.art.day.internacional) {
+    //     // print it as a card to the trendingWell 
+    //     trendingWell.append(
+    //         $("<div/>", { class: "card artist-btn trending w-full md:w-1/6 inline-flex md:block items-center text-center bg-green-200", 'data-artist': ranked.name }).append([
+    //             $("<img/>", { src: ranked.pic_small, alt: ranked.name, class: "md:w-full sm:" }),
+    //             $("<span/>", { text: ranked.name, class: "ml-2" }),
+    //         ])
+    //     );
+    // }
 }
-=======
->>>>>>> master
 
 /*==============================================
 =      Main Code
@@ -271,11 +279,5 @@ artistSearch.on("submit", artistAdded);
 
 // add link for all artist buttons
 $(document).on("click", ".artist-btn", function () {
-<<<<<<< HEAD
-   
     getData($(this).attr("data-artist").toLowerCase().trim().split(" ").join("-"));
-
-=======
-    getData($(this).attr("data-artist").toLowerCase().trim().split(" ").join("-"));
->>>>>>> master
 });
