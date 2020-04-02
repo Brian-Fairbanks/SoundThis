@@ -9,13 +9,12 @@
     <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="./styles.css">
     <!-- jquery 3.4.1 - latest -->
-
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"
         integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"
         integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>
-
     <script src="https://kit.fontawesome.com/9aa3b96097.js" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
 
 </head>
 
@@ -24,7 +23,7 @@
     <!-- Sticky Header -->
     <header class="flex items-center justify-between flex-wrap bg-green-900 p-6">
         <div class="flex items-center flex-shrink-0 text-white mr-6">
-            <span class="font-semibold text-xl tracking-tight">SoundThis!</span>
+            <div id="homepage-btn" class="font-semibold text-xl tracking-tight">SoundThis!</div>
         </div>
         <form id="artistSearchForm">
             <div class="input-group mb-3">
@@ -84,20 +83,18 @@
         <div id="artistPage" class="collapsed">
             <!-- Artist Name -->
             <section>
-                <div id="artistBanner" class="relative bg-teal-900 text-green-100 p-3">
-                    <h2 id="artistBannerName" class="text-4xl text-center font-bold ">
-                        Artist Name
-                        
-
-                        
-
-
-
-                        
-                        
-                    </h2>
-                    <div id="genreWell" class="text-center"></div>
-                    <img id="artistBannerPic" class="absolute h-full bottom-0 left-0 mr-1" src="", alt="">
+                <div id="artistBanner" class="relative bg-teal-900 text-green-100 p-0 flex content-end">
+                    <div class="relative flex-shrink-0" style="height:200px!important; width:200px!important;">
+                        <div class="absolute rounded-full h-full w-full overflow-hidden shadow-lg" style="bottom:-20px;">
+                            <img id="artistBannerPic" class="h-full w-full" src="", alt="">
+                        </div>
+                    </div>
+                    <div class="">
+                        <h2 id="artistBannerName" class="text-4xl font-bold ">
+                            Artist Name
+                        </h2>
+                        <div id="genreWell" class=""></div>
+                    </div>
                     <span class="absolute bottom-0 right-0 mr-1">
                         courtesey of <a href="https://www.vagalume.com.br" id="vagaLink" class="text-green-400">vagalume</a>
                     </span>
