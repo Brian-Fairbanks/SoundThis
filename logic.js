@@ -5,8 +5,7 @@ var landingPage = $("#landing-page");
 var artistPage = $("#artistPage");
 
 var vagaAuthKey = "9e3c9da5e3a86ef90b7a336db22e59cb";
-var lastfmAuthKey = "5df3eb015b42d401ebf833e6895a745f"
-var musicMatchAuthKey = '165b48bb5f5527dd1025912a7554429d';
+var lastfmAuthKey = "5df3eb015b42d401ebf833e6895a745f";
 // Trending Artists API
 var trendingQuery = 'https://api.vagalume.com.br/rank.php?apikey=' + vagaAuthKey + '&type=art&period=day&scope=internacional&limit=6';
 var limit=6;
@@ -35,6 +34,10 @@ var artistBtnStyles = "artist-btn w-full md:w-1/2 lg:w-1/4 xl:w-1/6 inline-flex 
 /*==============================================
 =       Functions
 ================================================*/
+
+/* = Trending Tab Functions
+========================================================*/
+
 function eachTrending(artist, pArtist){
     $.ajax({
         //url: trendingQuery,       //vagalume method depreciated.
@@ -73,8 +76,6 @@ function printAllTrending(response) {
 
 // run an ajax call to get the top 6 trending artists from VagaLume API, then pass this to print
 
-/* = Trending Tab Functions
-========================================================*/
 function getTrending() {
     $.ajax({
         //url: trendingQuery,       //vagalume method depreciated.
@@ -89,6 +90,9 @@ function getTrending() {
             printAllTrending(response);
         });
 }
+
+/* = Artist Page Functions  (album printing portion down under musicBrainz functions)
+========================================================*/
 
 function printRelated(relatedArray) {
     // console.log(albumArray);
@@ -139,7 +143,7 @@ function getData(artist) {
 
             // print all of the albums & related tracks associated with this artist
             printHeader(response);
-            musicBrainz(response.artist.desc);
+            getMusicBrainzAlbums(response.artist.desc);
             printRelated(response.artist.related);
             bandsintown(artist.split(/[ -]/).join("+"));
 
@@ -265,7 +269,7 @@ function printEvents(response) {
 //================================================
 
 //get the associated ArtistID from MusicBrainz
-function musicBrainz(artist){
+function getMusicBrainzAlbums(artist){
     $.ajax({
         url:"https://musicbrainz.org/ws/2/artist/?query="+artist+"&fmt=json",
         method:"GET"
