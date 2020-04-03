@@ -6,6 +6,7 @@ var artistPage = $("#artistPage");
 
 var vagaAuthKey = "9e3c9da5e3a86ef90b7a336db22e59cb";
 var lastfmAuthKey = "5df3eb015b42d401ebf833e6895a745f"
+var musicMatchAuthKey = '165b48bb5f5527dd1025912a7554429d';
 // Trending Artists API
 var trendingQuery = 'https://api.vagalume.com.br/rank.php?apikey=' + vagaAuthKey + '&type=art&period=day&scope=internacional&limit=6';
 var limit=6;
@@ -48,7 +49,7 @@ function eachTrending(artist, pArtist){
             $("#"+pArtist).append([
                 $("<img/>", { src: "https://www.vagalume.com.br" + response.artist.pic_medium , alt: artist, class: "h-24 w-24 md:w-full md:h-auto"  }),
                 $("<span/>", { text: artist, class: "ml-2" })
-            ])
+            ]);
     });
 }
 
@@ -88,21 +89,6 @@ function getTrending() {
             printAllTrending(response);
         });
 }
-
-
-/* = Artist Page Functions
-========================================================*/
-function printAlbums(albumArray) {
-    // console.log(albumArray);
-    albumWell.empty();
-    for (album of albumArray) {
-        console.log(album);
-        albumWell.append(
-            $("<div/>", { text: album.desc })
-        );
-    }
-}
-
 
 function printRelated(relatedArray) {
     // console.log(albumArray);
@@ -153,7 +139,7 @@ function getData(artist) {
 
             // print all of the albums & related tracks associated with this artist
             printHeader(response);
-            printAlbums(response.artist.albums.item);
+            musicBrainz(response.artist.desc);
             printRelated(response.artist.related);
             bandsintown(artist.split(/[ -]/).join("+"));
 
@@ -252,7 +238,7 @@ function printEvents(response) {
     console.log(response.datetime)
 
     if (response.length == 0) {
-        $(eventWell).append("Sorry No Events at This Time")
+        $(eventWell).empty().append($("<div/>", { text: "Sorry, but there are no events at this time", class: "text-center bg-green-200 text-xl w-full p-3" }));
         return;
     }
 
@@ -275,9 +261,79 @@ function printEvents(response) {
     }
 
 }
+// =  Music Brainz Functions
+//================================================
 
+//get the associated ArtistID from MusicBrainz
+function musicBrainz(artist){
+    $.ajax({
+        url:"https://musicbrainz.org/ws/2/artist/?query="+artist+"&fmt=json",
+        method:"GET"
+    })
+    .fail(  function(response){
+        console.log("Data nof found for "+artist);
+    })
+    .then(function(response){
+        console.log(response);
+        var aristID="";
+        var count=0;
+        // response should be a search of all artists, groups, and songs with the name
+        do{
+            if(response.artists[count].type=="Group"){
+                artistID = response.artists[count].id
+            }      // check back for artists as well
+        }while(artistID=="")
+        console.log(artistID);
+        getAlbums(artistID);
+    })
+}
 
+//get the associated albums from musicBrainz
+function getAlbums(artistID){
+    $.ajax({
+        url:"https://musicbrainz.org/ws/2/release?artist="+artistID+"&type=album|ep&fmt=json",
+        method:"GET"
+    })
+    .fail(  function (){
+        console.log("Data not found for "+artistID);
+    })
+    .done(function(response){
+        albumWell.empty();
+        var printed=[];
+        console.log(response);
+        for(album of response.releases){
+            
+        //come back later and sort/parse these to purge identical names, and those with prioritize those with album art 
 
+            if(printed.indexOf(album.title)<0){
+                albumWell.append(
+                    $("<div/>", { class: "card w-full md:w-1/6 inline-flex md:block items-center text-center bg-green-200 p-1", id: album.id }).append([
+                        $("<img/>", { src: 'http://via.placeholder.com/200x200', alt: album.title, id: "img"+album.id, class: "h-24 w-24 md:w-full md:h-auto"  }),
+                        $("<span/>", { text: album.title, class: "ml-2" })
+                    ])
+                );
+                if(album['cover-art-archive'].artwork==true){
+                    getAlbumArtwork(album.id)
+                }
+                printed.push(album.title);
+            }
+        }
+    })
+}
+
+function getAlbumArtwork(albumID){
+    $.ajax({
+        url:"http://coverartarchive.org/release/"+albumID+"/",
+        method:"GET"
+    })
+    .fail(  function (){
+        console.log("Data not found for album "+albumID);
+        searchedArtistGroup.append("data not found")
+    })
+    .done(function(response){
+        $("#img"+albumID).attr("src", response.images[0].thumbnails.small);
+    })
+}
 
 
 /*==============================================
