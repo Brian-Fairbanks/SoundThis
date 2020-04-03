@@ -9,8 +9,8 @@ var lastfmAuthKey = "5df3eb015b42d401ebf833e6895a745f"
 // Trending Artists API
 var trendingQuery = 'https://api.vagalume.com.br/rank.php?apikey=' + vagaAuthKey + '&type=art&period=day&scope=internacional&limit=6';
 var limit=6;
-var trendingQueryLFM = 'http://ws.audioscrobbler.com/2.0/?method=chart.gettopartists&api_key='+lastfmAuthKey+'&limit='+limit+'&format=json'
-var getArtistLFM = 'http://ws.audioscrobbler.com/2.0/?api_key='+lastfmAuthKey+'&format=json&method=artist.getinfo&artist=';
+var trendingQueryLFM = 'https://ws.audioscrobbler.com/2.0/?method=chart.gettopartists&api_key='+lastfmAuthKey+'&limit='+limit+'&format=json'
+var getArtistLFM = 'https://ws.audioscrobbler.com/2.0/?api_key='+lastfmAuthKey+'&format=json&method=artist.getinfo&artist=';
 
 var trendingWell = $("#trendingWell");
 var relatedWell = $("#relatedWell");
