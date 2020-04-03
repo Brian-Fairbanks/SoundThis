@@ -5,8 +5,11 @@ var landingPage = $("#landing-page");
 var artistPage = $("#artistPage");
 
 var vagaAuthKey = "9e3c9da5e3a86ef90b7a336db22e59cb";
+var lastfmAuthKey = "5df3eb015b42d401ebf833e6895a745f"
 // Trending Artists API
 var trendingQuery = 'https://api.vagalume.com.br/rank.php?apikey=' + vagaAuthKey + '&type=art&period=day&scope=internacional&limit=6';
+var trendingQueryLFM = 'http://ws.audioscrobbler.com/2.0/?method=chart.gettopartists&api_key='+lastfmAuthKey+'&format=json'
+var getArtistLFM = 'http://ws.audioscrobbler.com/2.0/?api_key='+lastfmAuthKey+'&format=json&method=artist.getinfo&artist=';
 
 var trendingWell = $("#trendingWell");
 var relatedWell = $("#relatedWell");
@@ -30,19 +33,38 @@ var artistBtnStyles = "artist-btn w-full md:w-1/2 lg:w-1/4 xl:w-1/6 inline-flex 
 /*==============================================
 =       Functions
 ================================================*/
+function eachTrending(artist, pArtist){
+    $.ajax({
+        //url: trendingQuery,       //vagalume method depreciated.
+        url: getArtistLFM+artist,
+        method: "GET",
+    })
+        .fail(function (xhr, ajaxOptions, thrownError) {
+            console.log("Trending Error: " + JSON.stringify(xhr));
+            trendingWell.empty().append($("<div/>", { text: "I'm sorry, but there has been an error pulling todays trending artists", class: "text-center bg-green-200 text-xl w-full p-3" }));
+        })
+        .done(function (response) {
+            console.log(pArtist);
+            console.log(response);
+            $("#"+pArtist).text(response.artist.name+" has been found");
+        });
+}
+
 
 // takes the JSON API for trending artists, and writes the with formatted CSS/HTML to the dom
-function printTrending(response) {
+function printAllTrending(response) {
     console.log(response);
+    trendingWell.empty();
     //for each artist...
-    for (ranked of response.art.day.internacional) {
+    //for (ranked of response.art.day.internacional) {      // vagalume method depreciated
+    for (ranked of response.artists.artist) {
+        var formatedName = ranked.name.replace(/[^A-Z0-9]/ig, "_");
         // print it as a card to the trendingWell 
         trendingWell.append(
-            $("<div/>", { class: "card artist-btn trending w-full md:w-1/6 inline-flex md:block items-center text-center bg-green-200", 'data-artist': ranked.name }).append([
-                $("<img/>", { src: ranked.pic_small, alt: ranked.name, class: "md:w-full sm:" }),
-                $("<span/>", { text: ranked.name, class: "ml-2" }),
-            ])
-        );
+            $("<div/>", { class: "card artist-btn trending w-full md:w-1/6 inline-flex md:block items-center text-center bg-green-200", 'data-artist': ranked.name, 'id': formatedName })
+        )
+        //console.log(ranked.name.replace(/[^A-Z0-9]/ig, "_"));
+        eachTrending(ranked.name, formatedName);
     }
 }
 
@@ -52,7 +74,8 @@ function printTrending(response) {
 ========================================================*/
 function getTrending() {
     $.ajax({
-        url: trendingQuery,
+        //url: trendingQuery,       //vagalume method depreciated.
+        url: trendingQueryLFM,
         method: "GET",
     })
         .fail(function (xhr, ajaxOptions, thrownError) {
@@ -60,7 +83,7 @@ function getTrending() {
             trendingWell.empty().append($("<div/>", { text: "I'm sorry, but there has been an error pulling todays trending artists", class: "text-center bg-green-200 text-xl w-full p-3" }));
         })
         .done(function (response) {
-            printTrending(response);
+            printAllTrending(response);
         });
 }
 
