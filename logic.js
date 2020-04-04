@@ -136,11 +136,6 @@ function getData(artist) {
     })
         .done(function (response) {
 
-
-            //store? this information may actually be useful laterS
-            curBandData = response;
-            //console.log(curBandData);
-
             // print all of the albums & related tracks associated with this artist
             printHeader(response);
             getMusicBrainzAlbums(response.artist.desc);
@@ -273,7 +268,7 @@ function sortByKeyAsc(array, key) {
     });
 }
 
-//get the associated ArtistID from MusicBrainz
+//a bit of a misnomer - get the associated ArtistID from MusicBrainz and chain the process to get all albums
 function getMusicBrainzAlbums(artist){
     $.ajax({
         url:"https://musicbrainz.org/ws/2/artist/?query="+artist+"&fmt=json",
@@ -283,55 +278,58 @@ function getMusicBrainzAlbums(artist){
         console.log("Data nof found for "+artist);
     })
     .done(function(response){
-        console.log(response);
-        var artistID="";
-        var count=0;
+        //console.log(response);
         // response should be a search of all artists, groups, and songs with the name
-        do{
-            if(response.artists[count].type=="Group" || response.artists[count].type=="Person"){
-                artistID = response.artists[count].id
-            }      // check back for artists as well
-        }while(artistID=="")
+        artistID = response.artists[0].id
         console.log(artistID);
-        getAlbums(artistID);
+        // artist is found, clear the well for printing
+        albumWell.empty();
+        getChunk(artistID, 0);
     })
 }
 
-//get the associated albums from musicBrainz
-function getAlbums(artistID){
+function getChunk(artistId, curoffset){
+    //breaking down the construction of a particularly long url query...
+    var queryURL = "https://musicbrainz.org/ws/2/release-group?";
+    queryURL+="artist="+artistID;
+    queryURL+= "&offset="+curoffset;
+    queryURL+= "&fmt=json";
+
     $.ajax({
-        url:"https://musicbrainz.org/ws/2/release-group?artist="+artistID+"&fmt=json",
+        url:queryURL,
         method:"GET"
     })
     .fail(  function (){
         console.log("Data not found for "+artistID);
     })
     .done(function(response){
-        // clear the album well
-        albumWell.empty();
-        
-        var printed=[];
         console.log(response);
-
-        sortByKeyAsc(response['release-groups'], "first-release-date")
-        for(album of response['release-groups']){
-            
-        //come back later and sort/parse these to purge identical names, and those with prioritize those with album art 
-
-            if(printed.indexOf(album.title)<0){
-                albumWell.append(
-                    $("<div/>", { class: "card w-full md:w-1/6 inline-flex md:block items-center text-center bg-green-200 p-1", id: album.id }).append([
-                        $("<img/>", { src: 'http://via.placeholder.com/200x200', alt: album.title, id: "img"+album.id, class: "h-24 w-24 md:w-full md:h-auto"  }),
-                        $("<span/>", { text: album.title, class: "ml-2" })
-                    ])
-                );
-                // if(album['cover-art-archive'].artwork==true){
-                    getAlbumArtwork(album.id)
-                // }
-                //printed.push(album.title);
-            }
+        getAlbums(response);
+        if (curoffset < response['release-group-count']){
+            getChunk(artistID, curoffset+=25);
         }
     })
+}
+
+function getAlbums(response){
+    //sortByKeyAsc(response['release-groups'], "first-release-date")
+    for(album of response['release-groups']){
+        console.log(album)
+        albumWell.append(
+            $("<div/>", { class: " w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/6", id: album.id }).append(
+                $("<div/>",{class:"shadow-lg sm:rounded bg-green-200 sm:border border-gray-500 p-0 m-0 sm:m-2 h-full sm:h-auto w-full sm:w-5/6 md:w-auto inline-flex md:block items-center text-center"}).append([
+                    $("<img/>", { src: 'http://via.placeholder.com/200x200', alt: album.title, id: "img"+album.id, class: "h-24 w-24 md:w-full md:h-auto"  }),
+                    $("<div/>", { class:"w-full sm:pl-2 " }).append(
+                        [
+                            $("<div/>",{text: album.title, class: "font-bold text-lg mb-2"}),
+                            $("<div/>",{text: moment(album['first-release-date'], "YYYY-MM-DD").format("MMM Do YYYY"), class: "w-full"}),
+                        ]
+                    )
+                ])
+            )
+        );
+        getAlbumArtwork(album.id)
+    }
 }
 
 function getAlbumArtwork(albumID){
@@ -340,7 +338,7 @@ function getAlbumArtwork(albumID){
         method:"GET"
     })
     .fail(  function (){
-        console.log("Data not found for album "+albumID);
+        console.log("Image not found for album "+albumID);
     })
     .done(function(response){
         $("#img"+albumID).attr("src", response.images[0].thumbnails.small);
