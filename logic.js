@@ -8,9 +8,9 @@ var vagaAuthKey = "9e3c9da5e3a86ef90b7a336db22e59cb";
 var lastfmAuthKey = "5df3eb015b42d401ebf833e6895a745f";
 // Trending Artists API
 var trendingQuery = 'https://api.vagalume.com.br/rank.php?apikey=' + vagaAuthKey + '&type=art&period=day&scope=internacional&limit=6';
-var limit=6;
-var trendingQueryLFM = 'https://ws.audioscrobbler.com/2.0/?method=chart.gettopartists&api_key='+lastfmAuthKey+'&limit='+limit+'&format=json'
-var getArtistLFM = 'https://ws.audioscrobbler.com/2.0/?api_key='+lastfmAuthKey+'&format=json&method=artist.getinfo&artist=';
+var limit = 6;
+var trendingQueryLFM = 'https://ws.audioscrobbler.com/2.0/?method=chart.gettopartists&api_key=' + lastfmAuthKey + '&limit=' + limit + '&format=json'
+var getArtistLFM = 'https://ws.audioscrobbler.com/2.0/?api_key=' + lastfmAuthKey + '&format=json&method=artist.getinfo&artist=';
 
 var trendingWell = $("#trendingWell");
 var relatedWell = $("#relatedWell");
@@ -29,7 +29,7 @@ var curBandData;
 //EVENTS
 var eventWell = $("#eventWell")
 // Repeated tailwind Styles
-var artistBtnStyles = "artist-btn w-full md:w-1/2 lg:w-1/4 xl:w-1/6 inline-flex md:block items-center text-center bg-green-200 p-1 text-lg capitalize";
+var artistBtnStyles = "artist-btn w-full md:w-1/2 lg:w-1/4 xl:w-1/6 inline-flex md:block items-center text-center bg-green-200 p-1 text-lg capitalize hover:bg-green-500 cursor-pointer";
 
 /*==============================================
 =       Functions
@@ -38,22 +38,22 @@ var artistBtnStyles = "artist-btn w-full md:w-1/2 lg:w-1/4 xl:w-1/6 inline-flex 
 /* = Trending Tab Functions
 ========================================================*/
 
-function eachTrending(artist, pArtist){
+function eachTrending(artist, pArtist) {
     $.ajax({
         //url: trendingQuery,       //vagalume method depreciated.
-        url: "https://www.vagalume.com.br/" +pArtist + "/index.js",
+        url: "https://www.vagalume.com.br/" + pArtist + "/index.js",
         method: "GET",
     })
         .fail(function (xhr, ajaxOptions, thrownError) {
             console.log("Trending Error: " + JSON.stringify(xhr));
-            trendingWell.empty().append($("<div/>", { text: artist+" is trending, but something went wrong!" , class: "text-center bg-green-200 text-xl w-full p-3" }));
+            trendingWell.empty().append($("<div/>", { text: artist + " is trending, but something went wrong!", class: "text-center bg-green-200 text-xl w-full p-3" }));
         })
         .done(function (response) {
-            $("#"+pArtist).append([
-                $("<img/>", { src: "https://www.vagalume.com.br" + response.artist.pic_medium , alt: artist, class: "h-24 w-24 md:w-full md:h-auto"  }),
+            $("#" + pArtist).append([
+                $("<img/>", { src: "https://www.vagalume.com.br" + response.artist.pic_medium, alt: artist, class: "h-24 w-24 md:w-full md:h-auto" }),
                 $("<span/>", { text: artist, class: "ml-2" })
             ]);
-    });
+        });
 }
 
 
@@ -67,7 +67,7 @@ function printAllTrending(response) {
         var formatedName = ranked.name.toLowerCase().replace(/[^A-Z0-9]/ig, "-");
         // print it as a card to the trendingWell 
         trendingWell.append(
-            $("<div/>", { class: "card artist-btn trending w-full md:w-1/6 inline-flex md:block items-center text-center bg-green-200", 'data-artist': ranked.name, 'id': formatedName })
+            $("<div/>", { class: "card artist-btn trending w-full md:w-1/6 inline-flex md:block items-center text-center bg-green-200 hover:bg-green-500 cursor-pointer", 'data-artist': ranked.name, 'id': formatedName })
         )
         //console.log(ranked.name.replace(/[^A-Z0-9]/ig, "_"));
         eachTrending(ranked.name, formatedName);
@@ -269,60 +269,60 @@ function sortByKeyAsc(array, key) {
 }
 
 //a bit of a misnomer - get the associated ArtistID from MusicBrainz and chain the process to get all albums
-function getMusicBrainzAlbums(artist){
+function getMusicBrainzAlbums(artist) {
     $.ajax({
-        url:"https://musicbrainz.org/ws/2/artist/?query="+artist+"&fmt=json",
-        method:"GET"
+        url: "https://musicbrainz.org/ws/2/artist/?query=" + artist + "&fmt=json",
+        method: "GET"
     })
-    .fail(  function(response){
-        console.log("Data nof found for "+artist);
-    })
-    .done(function(response){
-        //console.log(response);
-        // response should be a search of all artists, groups, and songs with the name
-        artistID = response.artists[0].id
-        console.log(artistID);
-        // artist is found, clear the well for printing
-        albumWell.empty();
-        getChunk(artistID, 0);
-    })
+        .fail(function (response) {
+            console.log("Data nof found for " + artist);
+        })
+        .done(function (response) {
+            //console.log(response);
+            // response should be a search of all artists, groups, and songs with the name
+            artistID = response.artists[0].id
+            console.log(artistID);
+            // artist is found, clear the well for printing
+            albumWell.empty();
+            getChunk(artistID, 0);
+        })
 }
 
-function getChunk(artistId, curoffset){
+function getChunk(artistId, curoffset) {
     //breaking down the construction of a particularly long url query...
     var queryURL = "https://musicbrainz.org/ws/2/release-group?";
-    queryURL+="artist="+artistID;
-    queryURL+= "&offset="+curoffset;
-    queryURL+= "&fmt=json";
+    queryURL += "artist=" + artistID;
+    queryURL += "&offset=" + curoffset;
+    queryURL += "&fmt=json";
 
     $.ajax({
-        url:queryURL,
-        method:"GET"
+        url: queryURL,
+        method: "GET"
     })
-    .fail(  function (){
-        console.log("Data not found for "+artistID);
-    })
-    .done(function(response){
-        console.log(response);
-        getAlbums(response);
-        if (curoffset < response['release-group-count']){
-            getChunk(artistID, curoffset+=25);
-        }
-    })
+        .fail(function () {
+            console.log("Data not found for " + artistID);
+        })
+        .done(function (response) {
+            console.log(response);
+            getAlbums(response);
+            if (curoffset < response['release-group-count']) {
+                getChunk(artistID, curoffset += 25);
+            }
+        })
 }
 
-function getAlbums(response){
+function getAlbums(response) {
     //sortByKeyAsc(response['release-groups'], "first-release-date")
-    for(album of response['release-groups']){
+    for (album of response['release-groups']) {
         console.log(album)
         albumWell.append(
             $("<div/>", { class: " w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/6", id: album.id }).append(
-                $("<div/>",{class:"shadow-lg sm:rounded bg-green-200 sm:border border-gray-500 p-0 m-0 sm:m-2 h-full sm:h-auto w-full sm:w-5/6 md:w-auto inline-flex md:block items-center text-center"}).append([
-                    $("<img/>", { src: 'http://via.placeholder.com/200x200', alt: album.title, id: "img"+album.id, class: "h-24 w-24 md:w-full md:h-auto"  }),
-                    $("<div/>", { class:"w-full sm:pl-2 " }).append(
+                $("<div/>", { class: "shadow-lg sm:rounded bg-green-200 sm:border border-gray-500 p-0 m-0 sm:m-2 h-full sm:h-auto w-full sm:w-5/6 md:w-auto inline-flex md:block items-center text-center" }).append([
+                    $("<img/>", { src: 'http://via.placeholder.com/200x200', alt: album.title, id: "img" + album.id, class: "h-24 w-24 md:w-full md:h-auto" }),
+                    $("<div/>", { class: "w-full sm:pl-2 " }).append(
                         [
-                            $("<div/>",{text: album.title, class: "font-bold text-lg mb-2"}),
-                            $("<div/>",{text: moment(album['first-release-date'], "YYYY-MM-DD").format("MMM Do YYYY"), class: "w-full"}),
+                            $("<div/>", { text: album.title, class: "font-bold text-lg mb-2" }),
+                            $("<div/>", { text: moment(album['first-release-date'], "YYYY-MM-DD").format("MMM Do YYYY"), class: "w-full" }),
                         ]
                     )
                 ])
@@ -332,17 +332,17 @@ function getAlbums(response){
     }
 }
 
-function getAlbumArtwork(albumID){
+function getAlbumArtwork(albumID) {
     $.ajax({
-        url:"http://coverartarchive.org/release-group/"+albumID+"/",
-        method:"GET"
+        url: "http://coverartarchive.org/release-group/" + albumID + "/",
+        method: "GET"
     })
-    .fail(  function (){
-        console.log("Image not found for album "+albumID);
-    })
-    .done(function(response){
-        $("#img"+albumID).attr("src", response.images[0].thumbnails.small);
-    })
+        .fail(function () {
+            console.log("Image not found for album " + albumID);
+        })
+        .done(function (response) {
+            $("#img" + albumID).attr("src", response.images[0].thumbnails.small);
+        })
 }
 
 
