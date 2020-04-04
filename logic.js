@@ -59,7 +59,7 @@ function eachTrending(artist, pArtist){
 
 // takes the JSON API for trending artists, and writes the with formatted CSS/HTML to the dom
 function printAllTrending(response) {
-    console.log(response);
+    //console.log(response);
     trendingWell.empty();
     //for each artist...
     //for (ranked of response.art.day.internacional) {      // vagalume method depreciated
@@ -98,7 +98,7 @@ function printRelated(relatedArray) {
     // console.log(albumArray);
     relatedWell.empty();
     for (artist of relatedArray) {
-        console.log(artist);
+        //console.log(artist);
         relatedWell.append(
             $("<div/>", { text: artist.name, class: artistBtnStyles, 'data-artist': artist.name })
         );
@@ -134,12 +134,12 @@ function getData(artist) {
             }
         }
     })
-        .then(function (response) {
+        .done(function (response) {
 
 
             //store? this information may actually be useful laterS
             curBandData = response;
-            console.log(curBandData);
+            //console.log(curBandData);
 
             // print all of the albums & related tracks associated with this artist
             printHeader(response);
@@ -213,33 +213,31 @@ function bandsintown(artist) {
     var eventURL = "https://rest.bandsintown.com/artists/" + artist + "/events?app_id=" + apiKey
     var artistURL = "https://rest.bandsintown.com/artists/" + artist + "?app_id=" + apiKey
 
-    console.log("making ajax call")
+    //console.log("making ajax call")
     $.ajax({
         url: artistURL,
         method: "GET",
         dataType: "json"
     }).then(function (response) {
-        console.log(response);
+        //console.log(response);
 
 
     })
-    console.log("making ajax call")
+    //console.log("making ajax call")
     $.ajax({
         url: eventURL,
         method: "GET",
         dataType: "json"
     }).then(function (response) {
-        console.log(response)
-
+        //console.log(response)
 
         printEvents(response);
-
     })
 }
 
 function printEvents(response) {
     eventWell.empty();
-    console.log(response.datetime)
+    //console.log(response.datetime)
 
     if (response.length == 0) {
         $(eventWell).empty().append($("<div/>", { text: "Sorry, but there are no events at this time", class: "text-center bg-green-200 text-xl w-full p-3" }));
@@ -268,6 +266,13 @@ function printEvents(response) {
 // =  Music Brainz Functions
 //================================================
 
+function sortByKeyAsc(array, key) {
+    return array.sort(function (a, b) {
+        var x = a[key]; var y = b[key];
+        return ((x < y) ? -1 : ((x > y) ? 1 : 0));
+    });
+}
+
 //get the associated ArtistID from MusicBrainz
 function getMusicBrainzAlbums(artist){
     $.ajax({
@@ -277,13 +282,13 @@ function getMusicBrainzAlbums(artist){
     .fail(  function(response){
         console.log("Data nof found for "+artist);
     })
-    .then(function(response){
+    .done(function(response){
         console.log(response);
-        var aristID="";
+        var artistID="";
         var count=0;
         // response should be a search of all artists, groups, and songs with the name
         do{
-            if(response.artists[count].type=="Group"){
+            if(response.artists[count].type=="Group" || response.artists[count].type=="Person"){
                 artistID = response.artists[count].id
             }      // check back for artists as well
         }while(artistID=="")
@@ -295,17 +300,21 @@ function getMusicBrainzAlbums(artist){
 //get the associated albums from musicBrainz
 function getAlbums(artistID){
     $.ajax({
-        url:"https://musicbrainz.org/ws/2/release?artist="+artistID+"&type=album|ep&fmt=json",
+        url:"https://musicbrainz.org/ws/2/release-group?artist="+artistID+"&fmt=json",
         method:"GET"
     })
     .fail(  function (){
         console.log("Data not found for "+artistID);
     })
     .done(function(response){
+        // clear the album well
         albumWell.empty();
+        
         var printed=[];
         console.log(response);
-        for(album of response.releases){
+
+        sortByKeyAsc(response['release-groups'], "first-release-date")
+        for(album of response['release-groups']){
             
         //come back later and sort/parse these to purge identical names, and those with prioritize those with album art 
 
@@ -316,10 +325,10 @@ function getAlbums(artistID){
                         $("<span/>", { text: album.title, class: "ml-2" })
                     ])
                 );
-                if(album['cover-art-archive'].artwork==true){
+                // if(album['cover-art-archive'].artwork==true){
                     getAlbumArtwork(album.id)
-                }
-                printed.push(album.title);
+                // }
+                //printed.push(album.title);
             }
         }
     })
@@ -327,12 +336,11 @@ function getAlbums(artistID){
 
 function getAlbumArtwork(albumID){
     $.ajax({
-        url:"http://coverartarchive.org/release/"+albumID+"/",
+        url:"http://coverartarchive.org/release-group/"+albumID+"/",
         method:"GET"
     })
     .fail(  function (){
         console.log("Data not found for album "+albumID);
-        searchedArtistGroup.append("data not found")
     })
     .done(function(response){
         $("#img"+albumID).attr("src", response.images[0].thumbnails.small);
