@@ -22,9 +22,51 @@ This app will display as much relevant information as possible on any artists gi
 #### If I click on an trending artist, an existing search element, or search for a new artist
 * I will be presented with the information about the artist including:
 	* Their Name
+	* Their profile picture
+	* their genres
 	* Their Discography (all albums)
 	* Their tour dates (as pulled from the BandsInTown API)
 	* A list of similar artists
 
 #### From the artist page, If i click on the sound this badge in the upper right
 * I will return to the landing page
+
+## Technologies Used
+### CSS-Framework
+- Tailwind
+### APIS
+- BandsInTown
+	- Used to pull in upcoming concerts for each artist/band where applicable
+- LastFM
+	- Used to get the trending artists in America
+- Vagalume
+	- The biggest brazilian music portal.  Used to pull images, genres, and similar artists for each band/artist
+- MusicBrainz
+	- Used to populate albums for each band, including cover art
+
+## Group Work Breakdown
+### Brian:
+- Project Manager 
+- Vagalume API
+- LastFM API
+- MusicBrainz API
+- Tailwind Styling
+- Tending Tab
+- Album tab
+- Artist/genre header
+
+# Surge:
+- API for BandsInTown
+- Events section
+- Tailwind Styling
+
+# Daniel:
+- Search/History Clearing
+- documentation
+
+# Will: 
+- Header/Footer creation & styling
+- Search bar hookups
+- Search history logging-
+- Home/Logo button
+
