@@ -341,7 +341,7 @@ function getAlbums(response) {
 
 function getAlbumArtwork(albumID) {
     $.ajax({
-        url: "http://coverartarchive.org/release-group/" + albumID + "/",
+        url: "https://coverartarchive.org/release-group/" + albumID + "/",
         method: "GET"
     })
         .fail(function () {
