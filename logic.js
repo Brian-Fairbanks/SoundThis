@@ -25,6 +25,7 @@ var searchedArtistGroup = $("#searchWell");
 //albums
 var albumWell = $("#albumWell");
 var curBandData;
+var activeAlbum;
 
 //EVENTS
 var eventWell = $("#eventWell")
@@ -261,6 +262,7 @@ function printEvents(response) {
 // =  Music Brainz Functions
 //================================================
 
+
 function sortByKeyAsc(array, key) {
     return array.sort(function (a, b) {
         var x = a[key]; var y = b[key];
@@ -316,15 +318,20 @@ function getAlbums(response) {
     for (album of response['release-groups']) {
         console.log(album)
         albumWell.append(
-            $("<div/>", { class: " w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/6", id: album.id }).append(
-                $("<div/>", { class: "shadow-lg sm:rounded bg-green-200 sm:border border-gray-500 p-0 m-0 sm:m-2 h-full sm:h-auto w-full sm:w-5/6 md:w-auto inline-flex md:block items-center text-center" }).append([
-                    $("<img/>", { src: 'http://via.placeholder.com/200x200', alt: album.title, id: "img" + album.id, class: "h-24 w-24 md:w-full md:h-auto" }),
+            $("<div/>", { class: " w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5 album-btn", albumID: album.id  }).append(
+                $("<div/>", {
+                    class: "shadow-lg sm:rounded bg-green-200 sm:border border-gray-500 p-0 m-0 sm:m-2 h-full"
+                    + "sm:h-auto w-full sm:w-5/6 md:w-auto inline-flex md:block items-center text-center"
+                    + " hover:bg-green-600 object-scale-down"
+                }).append([
+                    $("<img/>", { src: 'http://via.placeholder.com/200x200', alt: album.title, id: "img" + album.id, class: "h-24 w-24 md:w-64 md:h-64" }),
                     $("<div/>", { class: "w-full sm:pl-2 " }).append(
                         [
                             $("<div/>", { text: album.title, class: "font-bold text-lg mb-2" }),
-                            $("<div/>", { text: moment(album['first-release-date'], "YYYY-MM-DD").format("MMM Do YYYY"), class: "w-full" }),
+                            $("<div/>", { text: moment(album['first-release-date'], "YYYY-MM-DD").format("MMM Do YYYY"), class: "w-full" })
                         ]
-                    )
+                    ),
+                    $("<div/>", { class: "tracks collapsed w-full" })
                 ])
             )
         );
@@ -346,6 +353,67 @@ function getAlbumArtwork(albumID) {
 }
 
 
+function hideAlbum(album){
+    if(album == undefined){return};
+    album.removeClass("activeAlbum");
+    album.find(".tracks").addClass("collapsed",200)
+}
+
+function showAlbum(albumID, albumDiv){
+    //slapped together method of handling this.  If the album list is expanded, then no need to do anything.  you must already be viewing
+    if(! albumDiv.find(".tracks").hasClass( "collapsed" )){ return;}
+    hideAlbum(activeAlbum);
+
+    albumDiv.addClass("activeAlbum");
+    albumDiv.find(".tracks").removeClass("collapsed");
+    activeAlbum = albumDiv;
+    if (albumDiv.find(".tracks").html() != ""){
+        return;
+    }
+    getAlbumReleases(albumID, albumDiv);
+
+}
+
+
+//  =====  Album Tracks
+
+function getAlbumReleases(releaseGroup, albumDiv){
+    //albumDiv.append( $("<div>", {text:releaseGroup}));
+
+    $.ajax({
+        url: "https://musicbrainz.org/ws/2/release-group/"+releaseGroup+"?inc=aliases+releases&fmt=json",
+        method: "GET"
+    })
+        .fail(function (response) {
+            console.log("Data not found for release-group " + releaseGroup);
+        })
+        .done(function (response) {
+            //console.log(response);
+            var albumID = response.releases[0].id;
+            //console.log(albumID);
+//            albumDiv.append( $("<div>", {text:releaseGroup}));
+            getAlbumInfo(albumID, albumDiv);
+
+        })
+}
+
+//a bit of a misnomer - get the associated ArtistID from MusicBrainz and chain the process to get all albums
+function getAlbumInfo(albumID, albumDiv) {
+    $.ajax({
+        url: "https://musicbrainz.org/ws/2/release/"+albumID+"?inc=aliases+labels+recordings&fmt=json",
+        method: "GET"
+    })
+        .fail(function (response) {
+            console.log("Data not found for albumID" + albumID);
+        })
+        .done(function (response) {
+            console.log(response);
+            for(track of response.media[0].tracks){
+                albumDiv.find(".tracks").append( $("<div>", {text:track.title}));
+            }
+        })
+}
+
 /*==============================================
 =      Main Code
 ================================================*/
@@ -363,6 +431,11 @@ artistSearch.on("submit", artistAdded);
 // add link for all artist buttons
 $(document).on("click", ".artist-btn", function () {
     getData($(this).attr("data-artist").toLowerCase().trim().split(" ").join("-"));
+});
+
+// add link for all album buttons
+$(document).on("click", ".album-btn", function () {
+    showAlbum($(this).attr("albumID"), $(this));
 });
 
 //Clear Searched Artists History
